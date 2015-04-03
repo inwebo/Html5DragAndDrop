@@ -5,6 +5,7 @@
         plugin.file     = file;
         plugin.element  = element;
         plugin.ajax     = ajax;
+        plugin.status   = "queued";
 
         // init callbacks
 
@@ -13,7 +14,9 @@
                 plugin.setPercentProgressTag(e);
             });
             plugin.ajax.addEventListener('load',function(e){
-                console.log('Done');
+                //console.log('Done');
+                //plugin.status = "done";
+                plugin.setStatus("done");
             });
         };
 
@@ -21,6 +24,19 @@
             var formData = new FormData();
             formData.append('File', plugin.file);
             plugin.ajax.send(formData);
+            plugin.setStatus("uploading");
+        };
+
+        plugin.getStatusTag = function() {
+            var li = plugin.element.getElementsByTagName('li');
+            var status = li[li.length-2];
+            console.log(status);
+            return status;
+        };
+
+        plugin.setStatus = function(_status) {
+            var status = plugin.getStatusTag();
+            status.innerHTML = _status;
         };
 
         plugin.getProgressTag = function(){

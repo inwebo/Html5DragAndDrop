@@ -144,7 +144,7 @@
         var rootLi = document.createElement('li');
         var state = 'queued';
         rootLi.setAttribute('id','item-'+ id);
-        rootLi.setAttribute('data-status',state);
+
         var ul = document.createElement('ul');
         var li = document.createElement('li');
         rootLi.setAttribute('data-name',file.name);
