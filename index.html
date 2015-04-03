@@ -4,15 +4,51 @@
     <meta charset="UTF-8">
     <title></title>
     <script src="core/upload/header.js"></script>
+    <script src="core/upload/formbuilder/formbuilder.js"></script>
+    <script src="core/upload/filelistfilteriterator/filelistfilteriterator.js"></script>
     <script src="core/upload/dropzone/dropzone.js"></script>
+    <script src="core/upload/display/display.js"></script>
+    <script src="core/hashtable/hashtable.js"></script>
+    <script src="core/upload/queuedelement/queuedelement.js"></script>
+    <script src="core/upload/uploader/uploader.js"></script>
+
+
+
+    <script src="core/upload/factory.js"></script>
     <style>
-        html:hover {
+        html, body {
+            min-width: 100%;
+            width: 100%;
+            min-height: 100%;
+            height: 100%;
+        }
+        #drop-zone {
+            min-width: 50%;
+            width: 50%;
+            min-height: 50%;
+            height: 50%;
             background-color: aliceblue;
+            margin: 0 auto;
+        }
+        #drop-zone form , #drop-zone form input{
+            min-width: 100%;
+            width: 100%;
+            min-height: 100%;
+            height: 100%;
+            display: none;
+        }
+
+        #drop-zone:hover {
+            background-color: antiquewhite;
         }
     </style>
 </head>
 <body>
-
+<div id="drop-zone"></div>
+<h2>Queued</h2>
+<ul id="display-valid"></ul>
+<h2>Invalid</h2>
+<ul id="display-invalid"></ul>
 <script src="demos/demo.js"></script>
 </body>
 </html>
