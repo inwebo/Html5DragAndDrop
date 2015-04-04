@@ -14,23 +14,37 @@
                 plugin.setPercentProgressTag(e);
             });
             plugin.ajax.addEventListener('load',function(e){
-                //console.log('Done');
-                //plugin.status = "done";
-                plugin.setStatus("done");
+                //plugin.setStatus("done");
+                if(plugin.ajax.status == 500) {
+                    plugin.setStatus("Error : " + plugin.ajax.responseText);
+                }
+                else {
+                    plugin.setStatus("Uploaded");
+                }
             });
+            plugin.ajax.addEventListener('error',function(e){
+                plugin.setStatus("error");
+            });
+
         };
 
-        plugin.send = function() {
+        /**
+         * @todo: le nom provient de la factory
+         */
+        plugin.send = function(fileArrayName) {
             var formData = new FormData();
-            formData.append('File', plugin.file);
+            formData.append(fileArrayName, plugin.file);
             plugin.ajax.send(formData);
             plugin.setStatus("uploading");
+        };
+
+        plugin.isDone = function() {
+            return plugin.ajax.readyState === 4;
         };
 
         plugin.getStatusTag = function() {
             var li = plugin.element.getElementsByTagName('li');
             var status = li[li.length-2];
-            console.log(status);
             return status;
         };
 
