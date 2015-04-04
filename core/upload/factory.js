@@ -52,10 +52,13 @@
 
         plugin.queue;
 
+        plugin.uploader;
+
         var init = function(element, allowedType) {
             plugin.dropzone = new DropZone(element, allowedType, plugin.formConfig.maxFileSize);
             plugin.form     = new FormBuilder(plugin.formConfig.id, plugin.formConfig.action, plugin.formConfig.maxFileSize, plugin.formConfig.responseArrayName);
             plugin.queue    = new HashTable();
+            plugin.uploader = new Uploader(5);
             element.appendChild(plugin.form.get());
             addEventListener();
         };
@@ -70,17 +73,16 @@
                 //console.log(e.detail);
                 var hashTable = plugin.arrayToHashTable(e.detail);
                 toQueue(hashTable);
-                console.log(plugin.queue, hashTable);
-
                 var event = new CustomEvent('dz-queued',{
                     'detail': hashTable
                 });
                 window.document.dispatchEvent(event);
             }, false);
+
             window.document.addEventListener('dz-filtered',function(e){
                 //console.log('filtered');
                 //console.log(e.detail);
-                var hashTable = plugin.arrayToHashTable(e.detail);
+                var hashTable = plugin.arrayToHashTable(e.detail,'Filtered');
                 var event = new CustomEvent('dz-filtered-queued',{
                     'detail': hashTable
                 });
@@ -93,7 +95,7 @@
          * @param arrayFile
          * @returns {{}}
          */
-        plugin.arrayToHashTable = function(arrayFile) {
+        plugin.arrayToHashTable = function(arrayFile,state) {
             var i, j, buffer;
             i = 0;
             j = arrayFile.length;
@@ -101,13 +103,10 @@
             for(i;i<j;i++) {
                 var current = arrayFile[i];
                 var hashId = current.name.hash().toString();
-                //buffer.push([hashId,current]);
-                var element = FactoryElement(hashId,current);
+                var element = FactoryElement(hashId,current,state);
                 var queuedElement = FactoryQueuedElement(current,element, plugin.formConfig.action);
                 buffer[hashId] = queuedElement;
-
             };
-            //console.log(buffer);
             return buffer;
         };
 
@@ -140,52 +139,46 @@
         return new QueuedElement(file,element,xhr);
     };
 
-    var FactoryElement = window.LibreJs.Upload.Factory.prototype.factoryElement = function(id, file){
+    var FactoryElement = window.LibreJs.Upload.Factory.prototype.factoryElement = function(id, file, state){
         var rootLi = document.createElement('li');
-        var state = 'queued';
+        var state = state||'queued';
         rootLi.setAttribute('id','item-'+ id);
 
         var ul = document.createElement('ul');
+
         var li = document.createElement('li');
         rootLi.setAttribute('data-name',file.name);
         li.innerHTML = file.name;
         ul.appendChild(li);
+
         var li = document.createElement('li');
-        li.innerHTML = (new Date(file.lastModified)).toDateString();
-        rootLi.setAttribute('data-lastModified',file.lastModified);
+        li.innerHTML = (new Date(file.lastModifiedDate)).toDateString();
+        rootLi.setAttribute('data-lastModified',file.lastModifiedDate);
         ul.appendChild(li);
+
         var li = document.createElement('li');
         li.innerHTML = file.size;
         ul.appendChild(li);
 
         var li = document.createElement('li');
+        li.setAttribute('data-status-display',state);
         li.innerHTML = state;
         ul.appendChild(li);
 
         var li = document.createElement('li');
         var progressBar = document.createElement('progress');
+        progressBar.setAttribute('data-status',state);
         progressBar.setAttribute('max','100');
         progressBar.setAttribute('value','0');
         li.appendChild(progressBar);
+
         ul.appendChild(li);
+
         rootLi.appendChild(ul);
+
         return rootLi;
     };
-
-
-    /**
-     * Objet file en dom node
-     */
-    window.LibreJs.Upload.Factory.prototype.fileToElement = function(){};
-    /**
-     * Wrapper d'objet file, ajoute la représentation en mémoire d'un dom node, et d'un objet ajax prêt
-     */
-    window.LibreJs.Upload.Factory.prototype.fileToQueuedElement  = function(){};
-    /**
-     * Ajoute le QueuedElement dans la liste d'attente principale
-     */
-    window.LibreJs.Upload.Factory.prototype.arrayFileToQueued  = function(){};
-
+    var Uploader = window.LibreJs.Upload.Uploader.prototype.constructor;
     var FormBuilder = window.LibreJs.Upload.FormBuilder.prototype.constructor;
     var DropZone = window.LibreJs.Upload.DropZone.prototype.constructor;
     var HashTable = window.LibreJs.HashTable.prototype.constructor;
