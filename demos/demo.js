@@ -2,8 +2,7 @@
 (function(window) {
     var Factory = window.LibreJs.Upload.Factory.prototype.constructor;
     var Display = window.LibreJs.Upload.Display.prototype.constructor;
-    var HashTable = window.LibreJs.HashTable.prototype.constructor;
-    var Uploader = window.LibreJs.Upload.Uploader.prototype.constructor;
+
 
     var allowedType = ['image/png'];
     var dropZone          = window.document.getElementById('drop-zone');
@@ -18,7 +17,7 @@
         /**
          * @type {String}
          */
-        action            : 'up.php',
+        action            : 'php/uploader.php',
         /**
          * @type {int}
          */
@@ -29,25 +28,11 @@
         responseArrayName : 'FilesToUpload'
     });
 
-
     var display = new Display(listValid, 'dz-queued');
 
-    var node =document.createElement('h1');
-    node.innerHTML = 'Test';
-    var html = window.document.getElementsByTagName('body')[0];
-    html.appendChild(node);
-    node.innerHTML = 'Test+';
-    var upload = new Uploader(5);
-    //upload.st();
+    var displayFiltered = new Display(listInvalid, 'dz-filtered-queued');
 
-    /*
-     window.document.addEventListener('dz-update',function(e){
+    //var upload = new Uploader(5);
 
-     }, false);
-
-     window.document.addEventListener('dz-filtered',function(e){
-
-     }, false);
-     */
 })(window);
 //]]>
