@@ -2,10 +2,10 @@
 ;(function(window){
     /**
      *
-     * @param id string Id du formulaire
-     * @param action string Action du formulaire
-     * @param maxFileSize string Upload maximum en octets
-     * @param responseArrayName string Nom du tableau contenant les fichiers
+     * @param {String} id string Id du formulaire
+     * @param {String} action string Action du formulaire
+     * @param {int} maxFileSize string Upload maximum en octets
+     * @param {String} responseArrayName string Nom du tableau contenant les fichiers
      * @constructor
      */
     window.LibreJs.Upload.FormBuilder = function(id, action, maxFileSize, responseArrayName){
@@ -23,6 +23,9 @@
             plugin.responseArrayName= responseArrayName;
         };
 
+        /**
+         * @returns {HTMLElement}
+         */
         plugin.get = function() {
             var form = document.createElement('form');
             form.setAttribute('id',plugin.id);

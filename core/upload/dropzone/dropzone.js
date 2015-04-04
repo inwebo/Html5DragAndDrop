@@ -2,11 +2,6 @@
 ;(function(window){
 
     if (!Array.prototype.contains) {
-        /**
-         * La chaine contient elle la sous chaine string
-         * @param string La chaine à tester.
-         * @returns {boolean}
-         */
         Array.prototype.contains = function(string) { return this.indexOf(string) != -1; };
     }
     if (!Array.prototype.diff) {
@@ -17,7 +12,6 @@
         };
     }
     /**
-     *
      * @param {Element} element The drop zone
      * @param {Array} allowedType Allowed mime-type
      * @param {int} maxFileSize Maxe size octets

@@ -8,7 +8,7 @@
             plugin.data[id] = item;
         };
 
-        plugin.get=function(id) {
+        plugin.get = function(id) {
             return plugin.data[id];
         };
 
@@ -17,7 +17,6 @@
                 delete plugin.data[id];
             }
         };
-
     };
 })(window);
 //]]>
