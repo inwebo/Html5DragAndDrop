@@ -45,7 +45,5 @@
 
     };
 
-    var FilterIterator = window.LibreJs.Upload.FileListFilterIterator.prototype.constructor;
-
 })(window);
 //]]>

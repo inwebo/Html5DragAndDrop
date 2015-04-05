@@ -5,37 +5,42 @@
         plugin.file     = file;
         plugin.element  = element;
         plugin.ajax     = ajax;
-        plugin.status   = "queued";
+        plugin.status   = Config.status.init;
 
         // init callbacks
 
         var init = function() {
-            plugin.ajax.upload.addEventListener('progress',function(e){
-                plugin.setPercentProgressTag(e);
+
+            plugin.ajax.upload.addEventListener('progress', function(e){
+                plugin.setProgressTagValue(e);
             });
             plugin.ajax.addEventListener('load',function(e){
-                //plugin.setStatus("done");
+
                 if(plugin.ajax.status == 500) {
-                    plugin.setStatus("Error : " + plugin.ajax.responseText);
+                    plugin.setStatus(Config.status.error + ' : ' + plugin.ajax.responseText);
                 }
                 else {
-                    plugin.setStatus("Uploaded");
+                    // Event done
+                    var event = new CustomEvent(Config.events.queuedItem.done,{
+                        'detail':plugin
+                    });
+                    plugin.status = Config.status.done;
+                    window.document.dispatchEvent(event);
+                    plugin.setStatus(Config.status.done);
                 }
             });
             plugin.ajax.addEventListener('error',function(e){
-                plugin.setStatus("error");
+                plugin.setStatus(Config.status.error);
             });
 
         };
 
-        /**
-         * @todo: le nom provient de la factory
-         */
         plugin.send = function(fileArrayName) {
+            fileArrayName = fileArrayName || 'File';
             var formData = new FormData();
             formData.append(fileArrayName, plugin.file);
             plugin.ajax.send(formData);
-            plugin.setStatus("uploading");
+            plugin.setStatus(Config.status.uploading);
         };
 
         plugin.isDone = function() {
@@ -61,13 +66,13 @@
             return Math.ceil(e.loaded / e.total * 100);
         };
 
-        plugin.setPercentProgressTag = function(e) {
+        plugin.setProgressTagValue = function(e) {
             plugin.getProgressTag().setAttribute('value',Math.ceil(plugin.getPercent(e)).toString());
         };
 
         init();
 
     };
-    var QueuedElement = window.LibreJs.Upload.QueuedElement.prototype.constructor;
+    var Config = window.LibreJs.Upload.Config;
 })(window);
 //]]>

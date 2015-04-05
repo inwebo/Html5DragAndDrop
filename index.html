@@ -4,33 +4,43 @@
     <meta charset="UTF-8">
     <title></title>
     <script src="core/upload/header.js"></script>
+    <script src="core/upload/config/config.js"></script>
     <script src="core/upload/formbuilder/formbuilder.js"></script>
     <script src="core/upload/filelistfilteriterator/filelistfilteriterator.js"></script>
     <script src="core/upload/dropzone/dropzone.js"></script>
     <script src="core/upload/display/display.js"></script>
     <script src="core/hashtable/hashtable.js"></script>
     <script src="core/upload/queuedelement/queuedelement.js"></script>
-    <script src="core/upload/uploader/uploader.js"></script>
-
-
+    <script src="core/upload/uploadqueuemanager/uploadqueuemanager.js"></script>
 
     <script src="core/upload/factory.js"></script>
     <style>
+
         html, body {
-            min-width: 100%;
+            position: relative;
             width: 100%;
-            min-height: 100%;
+            min-width: 100%;
             height: 100%;
+            min-height: 100%;
+            padding: 0;
+            border: 0;
+            margin: 0;
         }
-        #drop-zone {
-            min-width: 50%;
+
+        [data-dz]{
             width: 50%;
-            min-height: 50%;
             height: 50%;
+            min-height: 50%;
+
             background-color: aliceblue;
             margin: 0 auto;
         }
-        #drop-zone form , #drop-zone form input{
+
+        [data-dz]:hover {
+            background-color: antiquewhite;
+        }
+
+        [data-dz] form , [data-dz] form input{
             min-width: 100%;
             width: 100%;
             min-height: 100%;
@@ -38,17 +48,49 @@
             display: none;
         }
 
-        #drop-zone:hover {
-            background-color: antiquewhite;
-        }
+            [data-dz-list] {
+
+            }
+
+                [data-dz-list-item] {
+
+                }
+
+                [data-dz-list-item-infos] {
+
+                }
+
+                    [data-dz-list-item-infos] li {
+
+                    }
+
+                    [data-dz-item-name]::before {
+                        content: "Name : ";
+                    }
+                    [data-dz-item-lastModified]::before {
+                        content: "Last modified : ";
+                    }
+                    [data-dz-item-type]::before {
+                        content: "Mime type : ";
+                    }
+                    [data-dz-item-size]::before {
+                        content: "Size : ";
+                    }
+                    [data-dz-item-size]::after {
+                        content: " octets";
+                    }
+                    [data-dz-item-status]::before {
+                        content: "Status : ";
+                    }
+
     </style>
 </head>
 <body>
-<div id="drop-zone"></div>
+<div id="drop-zone" data-dz>&nbsp;</div>
 <h2>Queued</h2>
-<ul id="display-valid"></ul>
+<ul id="display-valid" data-dz-list></ul>
 <h2>Filtered</h2>
-<ul id="display-invalid"></ul>
+<ul id="display-invalid" data-dz-list></ul>
 <script src="demos/demo.js"></script>
 </body>
 </html>

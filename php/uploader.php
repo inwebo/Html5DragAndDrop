@@ -2,7 +2,8 @@
 include('./upload/autoload.php');
 use LibreMVC\Helpers\Upload;
 try {
-    $upload = new Upload('File', $_FILES, "./../uploaded/", $allowedType);
+
+    $upload = new Upload('File', $_FILES, "./../uploaded/", array("image/png"));
     $upload->send();
 }
 catch (Exception $e) {

@@ -2,14 +2,13 @@
 (function(window) {
     var Factory = window.LibreJs.Upload.Factory.prototype.constructor;
     var Display = window.LibreJs.Upload.Display.prototype.constructor;
-
-
-    var allowedType = ['image/png'];
+    var Config = window.LibreJs.Upload.Config;
+    var allowedType = ['image/png','images/jpg'];
     var dropZone          = window.document.getElementById('drop-zone');
     var listValid         = window.document.getElementById('display-valid');
     var listInvalid       = window.document.getElementById('display-invalid');
 
-    app = new Factory(dropZone, allowedType,{
+    var app = new Factory(dropZone, allowedType,{
         /**
          * @type {String}
          */
@@ -26,13 +25,14 @@
          * @type {String}
          */
         responseArrayName : 'FilesToUpload'
-    });
+    },
+   /**
+    * Max upload
+    */
+    5);
 
-    var display = new Display(listValid, 'dz-queued');
-
-    var displayFiltered = new Display(listInvalid, 'dz-filtered-queued');
-
-    //var upload = new Uploader(5);
+    var display = new Display(listValid, Config.events.dz.queued);
+    var displayFiltered = new Display(listInvalid, Config.events.dz.filtered);
 
 })(window);
 //]]>

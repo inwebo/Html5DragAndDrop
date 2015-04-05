@@ -19,7 +19,7 @@
      * @param {Object} formConfig
      * @constructor
      */
-    window.LibreJs.Upload.Factory = function(element, allowedType, formConfig){
+    window.LibreJs.Upload.Factory = function(element, allowedType, formConfig, maxUpload){
         var plugin   = this;
         /**
          * @type {window.LibreJs.Upload.DropZone.prototype.constructor}
@@ -45,6 +45,8 @@
             responseArrayName : formConfig.responseArrayName
         };
 
+        plugin.maxUpload = maxUpload || 5;
+
         /**
          * @type {Element}
          */
@@ -58,7 +60,7 @@
             plugin.dropzone = new DropZone(element, allowedType, plugin.formConfig.maxFileSize);
             plugin.form     = new FormBuilder(plugin.formConfig.id, plugin.formConfig.action, plugin.formConfig.maxFileSize, plugin.formConfig.responseArrayName);
             plugin.queue    = new HashTable();
-            plugin.uploader = new Uploader(5);
+            plugin.uploader = new UploadQueueManager(plugin.maxUpload);
             element.appendChild(plugin.form.get());
             addEventListener();
         };
@@ -68,22 +70,20 @@
          * @todo : A affiner par des callbacks
          */
         var addEventListener = function() {
-            window.document.addEventListener('dz-update',function(e){
-                //console.log('ok');
-                //console.log(e.detail);
-                var hashTable = plugin.arrayToHashTable(e.detail);
+
+            window.document.addEventListener( Config.events.dz.valid, function(e){
+                var hashTable = plugin.arrayToHashTable(e.detail, Config.status.init);
                 toQueue(hashTable);
-                var event = new CustomEvent('dz-queued',{
+                var event = new CustomEvent(Config.events.dz.queued,{
                     'detail': hashTable
                 });
                 window.document.dispatchEvent(event);
             }, false);
 
-            window.document.addEventListener('dz-filtered',function(e){
+            window.document.addEventListener(Config.events.dz.invalid,function(e){
                 //console.log('filtered');
-                //console.log(e.detail);
-                var hashTable = plugin.arrayToHashTable(e.detail,'Filtered');
-                var event = new CustomEvent('dz-filtered-queued',{
+                var hashTable = plugin.arrayToHashTable(e.detail,Config.status.filtered);
+                var event = new CustomEvent(Config.events.dz.filtered,{
                     'detail': hashTable
                 });
                 window.document.dispatchEvent(event);
@@ -130,58 +130,61 @@
     var FactoryQueuedElement = window.LibreJs.Upload.Factory.prototype.factoryQueuedElement = function(file,element, action){
         var xhr = new XMLHttpRequest();
         xhr.open("POST",action, true);
-        xhr.setRequestHeader('File',JSON.stringify({
-            name:file.name,
-            lastModified:file.lastModified,
-            size:file.size,
-            type:file.type
-        }));
+
         return new QueuedElement(file,element,xhr);
     };
 
-    var FactoryElement = window.LibreJs.Upload.Factory.prototype.factoryElement = function(id, file, state){
+    var FactoryElement = window.LibreJs.Upload.Factory.prototype.factoryElement = function(id, file, queuedElementStatus){
         var rootLi = document.createElement('li');
-        var state = state||'queued';
-        rootLi.setAttribute('id','item-'+ id);
+        rootLi.setAttribute('id', 'item-' + id);
+        rootLi.setAttribute(Config.dataAttribute.listItem, '');
 
         var ul = document.createElement('ul');
+        ul.setAttribute(Config.dataAttribute.listItemInfos, '');
 
         var li = document.createElement('li');
-        rootLi.setAttribute('data-name',file.name);
+        li.setAttribute(Config.dataAttribute.item.name,'');
         li.innerHTML = file.name;
         ul.appendChild(li);
 
         var li = document.createElement('li');
+        li.setAttribute(Config.dataAttribute.item.lastModified,'');
         li.innerHTML = (new Date(file.lastModifiedDate)).toDateString();
-        rootLi.setAttribute('data-lastModified',file.lastModifiedDate);
         ul.appendChild(li);
 
         var li = document.createElement('li');
+        li.setAttribute(Config.dataAttribute.item.type,'');
+        li.innerHTML = file.type;
+        ul.appendChild(li);
+
+        var li = document.createElement('li');
+        li.setAttribute(Config.dataAttribute.item.size,'');
         li.innerHTML = file.size;
         ul.appendChild(li);
 
         var li = document.createElement('li');
-        li.setAttribute('data-status-display',state);
-        li.innerHTML = state;
+        li.setAttribute(Config.dataAttribute.item.status, '');
+        li.innerHTML = queuedElementStatus;
         ul.appendChild(li);
 
-        var li = document.createElement('li');
-        var progressBar = document.createElement('progress');
-        progressBar.setAttribute('data-status',state);
-        progressBar.setAttribute('max','100');
-        progressBar.setAttribute('value','0');
-        li.appendChild(progressBar);
-
-        ul.appendChild(li);
-
+        if(queuedElementStatus !== Config.status.filtered ) {
+            var li = document.createElement('li');
+            var progressBar = document.createElement('progress');
+            li.setAttribute(Config.dataAttribute.item.progress, '');
+            progressBar.setAttribute('max','100');
+            progressBar.setAttribute('value','0');
+            li.appendChild(progressBar);
+            ul.appendChild(li);
+        }
         rootLi.appendChild(ul);
 
         return rootLi;
     };
-    var Uploader = window.LibreJs.Upload.Uploader.prototype.constructor;
+    var UploadQueueManager = window.LibreJs.Upload.UploadQueueManager.prototype.constructor;
     var FormBuilder = window.LibreJs.Upload.FormBuilder.prototype.constructor;
     var DropZone = window.LibreJs.Upload.DropZone.prototype.constructor;
     var HashTable = window.LibreJs.HashTable.prototype.constructor;
     var QueuedElement = window.LibreJs.Upload.QueuedElement.prototype.constructor;
+    var Config = window.LibreJs.Upload.Config;
 })(window);
 //]]>

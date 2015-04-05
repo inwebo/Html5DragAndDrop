@@ -41,7 +41,7 @@
          * @returns {boolean}
          */
         var isCompatible = function() {
-            return (window.File && window.FileList && window.FileReader);
+            return (window.File && window.FileList);
         };
 
         var addEventListeners = function() {
@@ -59,6 +59,8 @@
          */
         var dropHandler = function(e){
             e.preventDefault();
+            var event = new CustomEvent(Config.events.dz.drop);
+            window.document.dispatchEvent(event);
             filter(e.target.files || e.dataTransfer.files);
         };
 
@@ -74,8 +76,13 @@
         };
 
         var dispatcher = function(accepted, fileList) {
+
             if(accepted.length > 0) {
-                var event = new CustomEvent('dz-update', {
+                /**
+                 * dz-items-valid
+                 * @type {CustomEvent}
+                 */
+                var event = new CustomEvent(Config.events.dz.valid, {
                     'detail': accepted
                 });
                 window.document.dispatchEvent(event);
@@ -83,7 +90,7 @@
 
             var filtered = fileList.diff(accepted);
             if(filtered.length >0) {
-                var event = new CustomEvent('dz-filtered', {
+                var event = new CustomEvent(Config.events.dz.invalid, {
                     'detail': filtered
                 });
                 window.document.dispatchEvent(event);
@@ -94,9 +101,7 @@
 
         init(element, allowedType, maxFileSize);
     };
-
-    var DropZone = window.LibreJs.Upload.DropZone.prototype.constructor;
-    var FormBuilder = window.LibreJs.Upload.FormBuilder.prototype.constructor;
+    var Config = window.LibreJs.Upload.Config;
     var FilterIterator = window.LibreJs.Upload.FileListFilterIterator.prototype.constructor;
 })(window);
 //]]>
