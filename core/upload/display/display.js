@@ -4,11 +4,7 @@
     window.LibreJs.Upload.Display = function(list, event){
         var plugin   = this;
         plugin.list  = list;
-        /**
-         * @todo : Custom event
-         */
         plugin.event = event;
-
         var init = function() {
             window.document.addEventListener(plugin.event,function(e){
                 for(var item in e.detail) {
@@ -22,6 +18,5 @@
 
         init();
     };
-    var Display = window.LibreJs.Upload.Display.prototype.constructor;
 })(window);
 //]]>
