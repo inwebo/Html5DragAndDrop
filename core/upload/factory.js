@@ -167,15 +167,20 @@
         li.innerHTML = queuedElementStatus;
         ul.appendChild(li);
 
-        if(queuedElementStatus !== Config.status.filtered ) {
+
             var li = document.createElement('li');
-            var progressBar = document.createElement('progress');
             li.setAttribute(Config.dataAttribute.item.progress, '');
-            progressBar.setAttribute('max','100');
-            progressBar.setAttribute('value','0');
-            li.appendChild(progressBar);
+            if(queuedElementStatus !== Config.status.filtered ) {
+                var progressBar = document.createElement('progress');
+                progressBar.setAttribute('max','100');
+                progressBar.setAttribute('value','0');
+                li.appendChild(progressBar);
+            }
+        else {
+                li.innerHTML='-';
+            }
             ul.appendChild(li);
-        }
+
         rootLi.appendChild(ul);
 
         return rootLi;
