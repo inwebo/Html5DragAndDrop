@@ -144,12 +144,16 @@
 
         var li = document.createElement('li');
         li.setAttribute(Config.dataAttribute.item.name,'');
+        li.setAttribute('title',file.name);
         li.innerHTML = file.name;
         ul.appendChild(li);
 
         var li = document.createElement('li');
         li.setAttribute(Config.dataAttribute.item.lastModified,'');
-        li.innerHTML = (new Date(file.lastModifiedDate)).toDateString();
+        var date = new Date(file.lastModifiedDate);
+        var d = date.getDate() + '-' + (date.getMonth()+1).toString() + '-' + date.getFullYear();
+
+        li.innerHTML = d;
         ul.appendChild(li);
 
         var li = document.createElement('li');
@@ -162,10 +166,7 @@
         li.innerHTML = file.size;
         ul.appendChild(li);
 
-        var li = document.createElement('li');
-        li.setAttribute(Config.dataAttribute.item.status, '');
-        li.innerHTML = queuedElementStatus;
-        ul.appendChild(li);
+
 
 
             var li = document.createElement('li');
@@ -180,7 +181,10 @@
                 li.innerHTML='-';
             }
             ul.appendChild(li);
-
+        var li = document.createElement('li');
+        li.setAttribute(Config.dataAttribute.item.status, '');
+        li.innerHTML = queuedElementStatus;
+        ul.appendChild(li);
         rootLi.appendChild(ul);
 
         return rootLi;
